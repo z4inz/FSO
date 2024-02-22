@@ -2,50 +2,10 @@ import axios from 'axios'
 import personsService from './services/persons'
 import { useState, useEffect } from 'react'
 
-const DisplayPerson = ({ person, deletePerson }) => {
-  return (
-      <li style={{listStyleType: "none"}}>
-        {person.name} {person.number} <button onClick={deletePerson}>delete</button>
-      </li>
-  )
-}
-
-const SearchFilter = ({ handleSearchChange }) => {
-  return(
-    <p>Search name <input onChange={handleSearchChange}></input></p>
-  )
-}
-
-const Message = ({ message, errorMessage }) => {
-  if (message === null) {
-    return null
-  }
-  let classMessage = 'message'
-  if (errorMessage) {
-    classMessage = 'messageRed'
-  }
-  return (
-    <div className = {classMessage}>
-      {message}
-    </div>
-  )
-}
-
-const PersonForm = ({ addName, newName, newNumber, handleNameChange, handleNumberChange }) => {
-  return (
-    <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button> 
-        </div>
-      </form>
-  )
-}
+import DisplayPerson from './components/DisplayPerson'
+import Message from './components/Message'
+import PersonForm from './components/PersonForm'
+import SearchFilter from './components/SearchFilter'
 
 const App = () => {
   const [persons, setPersons] = useState([])
