@@ -76,9 +76,8 @@ const App = () => {
     const isPersonInList = persons.find(person => person.name === newName)
     if (isPersonInList){
       if(window.confirm(`${newName} is already in the list. Do you want to replace the old number with the new one?`)) {
-        const url = `http://localhost:3000/persons/${isPersonInList.id}`
-        axios
-          .put(url, {name: isPersonInList.name, number: newNumber})
+        personsService
+          .update(isPersonInList.id, {name: isPersonInList.name, number: newNumber})
           .then(response => {
             setPersons(persons.map(person => person.id !== isPersonInList.id ? person : response.data))
             setNewName("")
@@ -124,9 +123,8 @@ const App = () => {
   const deletePerson = (id) => {
     console.log(id + " button pressed")
     if (window.confirm("Do you really want to delete this number?")) {
-      const url = `http://localhost:3000/persons/${id}`
-      axios
-        .delete(url)
+      personsService
+        .del(id)
         .then((response) => {
           setPersons(persons.filter(person => person.id !== id))
           setMessage(
