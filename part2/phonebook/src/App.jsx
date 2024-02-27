@@ -39,15 +39,13 @@ const App = () => {
         personsService
           .update(isPersonInList.id, {name: isPersonInList.name, number: newNumber})
           .then(response => {
-            setPersons(persons.map(person => person.id !== isPersonInList.id ? person : response.data))
+            console.log(response.data)
+            setPersons(persons.map(person => person.id !== isPersonInList.id ? person : {name: isPersonInList.name, number: newNumber, id: person.id}))
             setNewName("")
             setNewNumber("")
             setMessage(
               `${newName} had their number changed to ${newNumber}`
             )
-            setTimeout(() => {
-              setMessage(null)
-            }, 5000)
           })
           .catch(error => {
             setPersons(persons.filter(person => person.id !== isPersonInList.id))
@@ -57,10 +55,6 @@ const App = () => {
             setMessage(
               `Information of ${newName} has already been removed from the server`
             )
-            setTimeout(() => {
-              setMessage(null)
-              setErrorMessage(false)
-            }, 5000)
             console.log(errorMessage)
           })
       }
@@ -73,9 +67,6 @@ const App = () => {
           setNewName("")
           setNewNumber("")
           setMessage(`Added ${newName} to the phonebook`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
         })
     }
   }
@@ -91,9 +82,6 @@ const App = () => {
             `Deleted ${(persons.find(person => person.id === id)).name} from the phonebook`
           )
           console.log(response)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
       })
     }
   }
@@ -123,7 +111,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Message message={message} errorMessage={errorMessage}/>
+      <Message message={message} errorMessage={errorMessage} setMessage={setMessage}/>
       <SearchFilter handleSearchChange={handleSearchChange} />
       <h2>Add a number</h2>
       <PersonForm addName={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />

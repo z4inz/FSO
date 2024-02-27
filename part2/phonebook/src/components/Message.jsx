@@ -1,4 +1,4 @@
-const Message = ({ message, errorMessage }) => {
+const Message = ({ message, errorMessage, setMessage }) => {
     if (message === null) {
       return null
     }
@@ -6,6 +6,9 @@ const Message = ({ message, errorMessage }) => {
     if (errorMessage) {
       classMessage = 'messageRed'
     }
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
     return (
       <div className = {classMessage}>
         {message}
