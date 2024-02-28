@@ -1,4 +1,3 @@
-import axios from 'axios'
 import personsService from './services/persons'
 import { useState, useEffect } from 'react'
 
