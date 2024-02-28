@@ -27,6 +27,13 @@ const App = () => {
   }, [])
   console.log("render", persons.length, "persons")
 
+  const handleMessage = (message, isError) => {
+    setNewName("")
+    setNewNumber("")
+    setErrorMessage(isError)
+    setMessage(message)
+  }
+
   const addName = (event) => {
     event.preventDefault()
     const nameObject = {
@@ -41,20 +48,11 @@ const App = () => {
           .then(response => {
             console.log(response.data)
             setPersons(persons.map(person => person.id !== isPersonInList.id ? person : {name: isPersonInList.name, number: newNumber, id: person.id}))
-            setNewName("")
-            setNewNumber("")
-            setMessage(
-              `${newName} had their number changed to ${newNumber}`
-            )
+            handleMessage(`${newName} had their number changed to ${newNumber}`, false)
           })
           .catch(error => {
             setPersons(persons.filter(person => person.id !== isPersonInList.id))
-            setNewName("")
-            setNewNumber("")
-            setErrorMessage(true)
-            setMessage(
-              `Information of ${newName} has already been removed from the server`
-            )
+            handleMessage(`Information of ${newName} has already been removed from the server`, true)
             console.log(errorMessage)
           })
       }
@@ -64,9 +62,7 @@ const App = () => {
         .create(nameObject)
         .then( response => {
           setPersons(persons.concat(response.data))
-          setNewName("")
-          setNewNumber("")
-          setMessage(`Added ${newName} to the phonebook`)
+          handleMessage(`Added ${newName} to the phonebook`, false)
         })
     }
   }
@@ -78,9 +74,7 @@ const App = () => {
         .del(id)
         .then((response) => {
           setPersons(persons.filter(person => person.id !== id))
-          setMessage(
-            `Deleted ${(persons.find(person => person.id === id)).name} from the phonebook`
-          )
+          handleMessage(`Deleted ${(persons.find(person => person.id === id)).name} from the phonebook`, false)
           console.log(response)
       })
     }
