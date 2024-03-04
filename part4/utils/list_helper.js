@@ -12,6 +12,50 @@ const totalLikes = (blogs) => {
   : blogs.reduce(reducer, 0)
 }
 
+const favouriteBlog = (blogs) => {
+  let maxVal = Number.MIN_VALUE
+  let index = 0
+  if (blogs.length === 0){
+    return 0
+  }
+  for (let i = 0; i < blogs.length; i++) {
+    if (blogs[i].likes > maxVal){
+      maxVal = blogs[i].likes
+      index = i
+    }
+  }
+  return {
+    title: blogs[index].title,
+    author: blogs[index].author,
+    likes: blogs[index].likes
+  }
+}
+
+const mostBlogs = (blogs) => {
+  let authors = {}
+  for (let i = 0; i < blogs.length; i++) {
+    const author = blogs[i].author
+    if (authors[author]) {
+      authors[author] += 1
+    }
+    else {
+      authors[author] = 1
+    }
+  }
+  let max = 0
+  let author = ""
+  for (let key in authors) {
+    if (authors[key] > max) {
+      max = authors[key]
+      author = key
+    }
+  }
+  return {
+    author: author,
+    blogs: max
+  }
+}
+
 module.exports = {
-  dummy, totalLikes
+  dummy, totalLikes, favouriteBlog, mostBlogs
 }
