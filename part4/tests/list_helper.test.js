@@ -129,10 +129,19 @@ describe('highest number of likes', () => {
 describe('author with most blogs', () => {
   test('normal', () => {
     const result = listHelper.mostBlogs(listWithMultipleBlogs)
-    console.log(result)
     assert.deepStrictEqual(result, {
       author: "Robert C. Martin",
       blogs: 3
+    })
+  })
+})
+
+describe('author with most likes', () => {
+  test('normal', () => {
+    const result = listHelper.mostLikes(listWithMultipleBlogs)
+    assert.deepStrictEqual(result, {
+      author: "Edsger W. Dijkstra",
+      likes: 17
     })
   })
 })
