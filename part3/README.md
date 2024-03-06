@@ -1,1 +1,1 @@
-https://fso-part3-z.fly.dev/
+https://fso-part3-z.fly.dev

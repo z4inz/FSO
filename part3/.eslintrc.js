@@ -34,8 +34,8 @@ module.exports = {
       'error', { 'before': true, 'after': true }
     ],
     'no-console': 0,
-    "no-unused-vars": "off",
-    "no-undef": "off",
+    'no-unused-vars': 'off',
+    'no-undef': 'off',
     '@stylistic/js/indent': [
       'error',
       2
