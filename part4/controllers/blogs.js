@@ -1,7 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
@@ -47,7 +45,7 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
     response.status(204).end()
   }
   else {
-    response.status(400).json({ error: 'invalid user, you don\'t have permission to delete this blog'})
+    response.status(401).json({ error: 'invalid user, you don\'t have permission to delete this blog'})
   }
 })
  
@@ -69,7 +67,7 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
     response.status(201).json(savedBlog)
   }
   else {
-    response.status(400).json({ error: 'invalid user, you don\'t have permission to delete this blog'})
+    response.status(401).json({ error: 'invalid user, you don\'t have permission to delete this blog'})
   }
 })
 
