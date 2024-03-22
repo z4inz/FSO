@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import NewBlogForm from './components/NewBlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -8,7 +9,10 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)  
+  const [user, setUser] = useState(null)
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -21,6 +25,7 @@ const App = () => {
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -34,6 +39,8 @@ const App = () => {
       window.localStorage.setItem(
         'loggedInUser', JSON.stringify(user)
       )
+
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -76,11 +83,15 @@ const App = () => {
     )
   }
 
+  const displayNewBlogForm = () => {
+    return (
+      <NewBlogForm addNewBlog={addNewBlog} title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}/>
+    )
+  }
+
   const displayBlogs = () => {
     return (
       <div>
-      <h2>Blogs</h2>
-      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
@@ -88,11 +99,32 @@ const App = () => {
     )
   }
 
+  const addNewBlog = async (event) => {
+    event.preventDefault()
+    console.log("wow")
+
+    const blogObject = {
+      title: title,
+      author: author,
+      url: url
+    }
+
+    const response = await blogService.createBlogpost(blogObject)
+    setBlogs(blogs.concat(response))
+    setTitle(''), setAuthor(''), setUrl('')
+  }
+
   return (
     <div>
       {user === null ?
         loginForm() :
-        displayBlogs()
+        <div>
+          <h1>Blogs</h1>
+          <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+          {displayNewBlogForm()}
+          <br></br>
+          {displayBlogs()}
+        </div>
       }
     </div>
   )
