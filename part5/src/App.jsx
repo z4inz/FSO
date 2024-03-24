@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
+import Message from './components/Message'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +13,10 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useState({
+    content: '',
+    isError: false
+  })
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -42,10 +46,16 @@ const App = () => {
 
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
+      setUsername(''), setPassword('')
+      setMessage({
+        content: `${user.name} logged in`,
+        isError: false
+      })
     } catch (exception) {
-        console.log("failed to login")
+      setMessage({
+        content: `Wrong username or password`,
+        isError: true
+      })
     }
 
     console.log('logging in with', username, password)
@@ -53,6 +63,10 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedInUser')
+    setMessage({
+      content: `${user.name} logged out`,
+      isError: false
+    })
     setUser(null)
   }
 
@@ -109,13 +123,26 @@ const App = () => {
       url: url
     }
 
-    const response = await blogService.createBlogpost(blogObject)
-    setBlogs(blogs.concat(response))
-    setTitle(''), setAuthor(''), setUrl('')
+    try {
+      const response = await blogService.createBlogpost(blogObject)
+      setBlogs(blogs.concat(response))
+      setTitle(''), setAuthor(''), setUrl('')
+      setMessage({
+          content: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
+          isError: false
+      })
+      console.log(response)
+    } catch (exception) {
+      setMessage({
+          content: exception.response.data.error,
+          isError: true
+      })
+    }
   }
 
   return (
     <div>
+      <Message message={message} setMessage={setMessage}/>
       {user === null ?
         loginForm() :
         <div>
