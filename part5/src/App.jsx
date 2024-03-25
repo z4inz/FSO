@@ -4,15 +4,14 @@ import NewBlogForm from './components/NewBlogForm'
 import Message from './components/Message'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+
   const [message, setMessage] = useState({
     content: '',
     isError: false
@@ -86,7 +85,7 @@ const App = () => {
         <div>
           password
             <input
-            type="text"
+            type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
@@ -94,12 +93,6 @@ const App = () => {
         </div>
         <button type="submit">login</button>
       </form>
-    )
-  }
-
-  const displayNewBlogForm = () => {
-    return (
-      <NewBlogForm addNewBlog={addNewBlog} title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}/>
     )
   }
 
@@ -113,31 +106,27 @@ const App = () => {
     )
   }
 
-  const addNewBlog = async (event) => {
-    event.preventDefault()
-    console.log("wow")
-
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url
-    }
-
+  const addNewBlog = async (blogObject) => {
     try {
       const response = await blogService.createBlogpost(blogObject)
+      console.log(response)
       setBlogs(blogs.concat(response))
-      setTitle(''), setAuthor(''), setUrl('')
       setMessage({
           content: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
           isError: false
       })
-      console.log(response)
     } catch (exception) {
       setMessage({
           content: exception.response.data.error,
           isError: true
       })
     }
+  }
+
+  const newBlogForm = () => {
+    return (
+      <NewBlogForm createNewBlog={addNewBlog} />
+    )
   }
 
   return (
@@ -148,7 +137,9 @@ const App = () => {
         <div>
           <h1>Blogs</h1>
           <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-          {displayNewBlogForm()}
+          <Togglable buttonLabel='new blog post'>
+            {newBlogForm()}
+          </Togglable>
           <br></br>
           {displayBlogs()}
         </div>
