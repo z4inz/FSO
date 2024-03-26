@@ -100,7 +100,7 @@ const App = () => {
     return (
       <div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} increaseBlogLike={increaseBlogLike} />
       )}
       </div>
     )
@@ -113,6 +113,23 @@ const App = () => {
       setBlogs(blogs.concat(response))
       setMessage({
           content: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
+          isError: false
+      })
+    } catch (exception) {
+      setMessage({
+          content: exception.response.data.error,
+          isError: true
+      })
+    }
+  }
+
+  const increaseBlogLike = async (id, blogObject) => {
+    try {
+      const response = await blogService.updateBlogpost(id, blogObject)
+      console.log(response)
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : response))
+      setMessage({
+          content: `Blog '${blogObject.title}' has been liked`,
           isError: false
       })
     } catch (exception) {

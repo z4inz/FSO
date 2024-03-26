@@ -30,6 +30,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   })
 
   const savedBlog = await blog.save()
+  await savedBlog.populate('user', { username: 1, name: 1, id: 1 })
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
@@ -45,7 +46,7 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
     response.status(204).end()
   }
   else {
-    response.status(401).json({ error: 'invalid user, you don\'t have permission to delete this blog'})
+    response.status(401).json({ error: 'Invalid user, you don\'t have permission to delete this blog'})
   }
 })
  
@@ -59,15 +60,17 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes
+    likes: body.likes,
+    user: user._id
   }
 
   if (user.id === blogUser.user.toString()) {
-    const savedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+    const savedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true, runValidators: true, context: 'query' })
+    await savedBlog.populate('user', { username: 1, name: 1, id: 1 })
     response.status(201).json(savedBlog)
   }
   else {
-    response.status(401).json({ error: 'invalid user, you don\'t have permission to delete this blog'})
+    response.status(401).json({ error: 'Invalid user, you don\'t have permission to update this blog'})
   }
 })
 

@@ -50,9 +50,15 @@ const App = () => {
             handleMessage(`${newName} had their number changed to ${newNumber}`, false)
           })
           .catch(error => {
-            setPersons(persons.filter(person => person.id !== isPersonInList.id))
-            handleMessage(`Information of ${newName} has already been removed from the server`, true)
-            console.log(errorMessage)
+            console.log(error)
+            if (error.response.status === 404) {
+              setPersons(persons.filter(person => person.id !== isPersonInList.id))
+              handleMessage(`Information of ${newName} has already been removed from the server`, true)
+              console.log(errorMessage)
+            }
+            else {
+              handleMessage(error.response.data.error, true)
+            }
           })
       }
     }
@@ -62,6 +68,9 @@ const App = () => {
         .then( response => {
           setPersons(persons.concat(response.data))
           handleMessage(`Added ${newName} to the phonebook`, false)
+        })
+        .catch(error => {
+          handleMessage(error.response.data.error, true)
         })
     }
   }
