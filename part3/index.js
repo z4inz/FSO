@@ -76,18 +76,11 @@ app.post('/api/persons/', (request, response, next) => {
 
 
 app.put('/api/persons/:id', (request, response, next) => {
-  body = request.body
-
-  const requiredFields = ['name', 'number']
-  const missingFields = requiredFields.filter(field => !(field in body))
-
-  if (missingFields.length > 0) {
-    return response.status(400).json({ error: `Missing required fields: ${missingFields.join(', ')}` })
-  }
+  const { name, number } = request.body
 
   Person.findByIdAndUpdate(
     request.params.id,
-    body,
+    { name, number },
     { new: true, runValidators: true, context: 'query' }
   )
     .then(updatedPerson => {

@@ -51,9 +51,6 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
 })
  
 blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
-  const user = request.user
-  const blogUser = await Blog.findById(request.params.id)
-
   const body = request.body
 
   const blog = {
@@ -61,17 +58,12 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
+    user: body.user
   }
 
-  if (user.id === blogUser.user.toString()) {
-    const savedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true, runValidators: true, context: 'query' })
-    await savedBlog.populate('user', { username: 1, name: 1, id: 1 })
-    response.status(201).json(savedBlog)
-  }
-  else {
-    response.status(401).json({ error: 'Invalid user, you don\'t have permission to update this blog'})
-  }
+  const savedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true, runValidators: true, context: 'query' })
+  await savedBlog.populate('user', { username: 1, name: 1, id: 1 })
+  response.status(201).json(savedBlog)
 })
 
 module.exports = blogsRouter

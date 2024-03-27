@@ -97,11 +97,12 @@ const App = () => {
   }
 
   const displayBlogs = () => {
+    const sortedBlogs = blogs.sort((a, b) => (b.likes - a.likes))
     return (
       <div>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} increaseBlogLike={increaseBlogLike} />
-      )}
+      {(sortedBlogs.map(blog =>
+        <Blog key={blog.id} blog={blog} increaseBlogLike={increaseBlogLike} removeBlog={deleteBlog} username={user.username} />
+      ))}
       </div>
     )
   }
@@ -134,9 +135,28 @@ const App = () => {
       })
     } catch (exception) {
       setMessage({
+        content: exception.response.data.error,
+        isError: true
+      })
+    }
+  }
+
+  const deleteBlog = async (blog) => {
+    if (window.confirm(`Do you want to delete the blog '${blog.title}' by '${blog.author}'`)) {
+      try {
+        const response = await blogService.deleteBlogpost(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setMessage({
+          content: `'${blog.title}' by '${blog.author}' has been deleted`,
+          isError: false
+      })
+      } catch (exception) {
+        console.log(exception)
+        setMessage({
           content: exception.response.data.error,
           isError: true
-      })
+        })
+      }
     }
   }
 
