@@ -1,12 +1,12 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, increaseBlogLike, removeBlog, username }) => {
 
   const [visible, setVisible] = useState(false)
 
-  const infoHidden = {display: visible ? 'none' : ''}
-  const infoShown = {display: visible ? '' : 'none'}
-  const deleteButtonHidden = {display: (username === blog.user.username) ? '' : 'none'}
+  const infoHidden = { display: visible ? 'none' : '' }
+  const infoShown = { display: visible ? '' : 'none' }
+  const deleteButtonHidden = { display: (username === blog.user.username) ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -33,7 +33,6 @@ const Blog = ({ blog, increaseBlogLike, removeBlog, username }) => {
     paddingLeft: 5,
     border: 'solid',
     borderWidth: 1,
-    paddingTop: 5,
     paddingBottom: 5,
     marginBottom: 5
   }

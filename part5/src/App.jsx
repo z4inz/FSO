@@ -8,7 +8,7 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
@@ -19,8 +19,8 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs(blogs)
+    )
   }, [])
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const App = () => {
       })
     } catch (exception) {
       setMessage({
-        content: `Wrong username or password`,
+        content: 'Wrong username or password',
         isError: true
       })
     }
@@ -75,21 +75,21 @@ const App = () => {
         <h2>Log in to application</h2>
         <div>
           username
-            <input
+          <input
             type="text"
             value={username}
             name="Username"
             onChange={({ target }) => setUsername(target.value)}
-            />
+          />
         </div>
         <div>
           password
-            <input
+          <input
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
-            />
+          />
         </div>
         <button type="submit">login</button>
       </form>
@@ -100,9 +100,9 @@ const App = () => {
     const sortedBlogs = blogs.sort((a, b) => (b.likes - a.likes))
     return (
       <div>
-      {(sortedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} increaseBlogLike={increaseBlogLike} removeBlog={deleteBlog} username={user.username} />
-      ))}
+        {(sortedBlogs.map(blog =>
+          <Blog key={blog.id} blog={blog} increaseBlogLike={increaseBlogLike} removeBlog={deleteBlog} username={user.username} />
+        ))}
       </div>
     )
   }
@@ -110,16 +110,15 @@ const App = () => {
   const addNewBlog = async (blogObject) => {
     try {
       const response = await blogService.createBlogpost(blogObject)
-      console.log(response)
       setBlogs(blogs.concat(response))
       setMessage({
-          content: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
-          isError: false
+        content: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
+        isError: false
       })
     } catch (exception) {
       setMessage({
-          content: exception.response.data.error,
-          isError: true
+        content: exception.response.data.error,
+        isError: true
       })
     }
   }
@@ -127,11 +126,10 @@ const App = () => {
   const increaseBlogLike = async (id, blogObject) => {
     try {
       const response = await blogService.updateBlogpost(id, blogObject)
-      console.log(response)
       setBlogs(blogs.map(blog => blog.id !== id ? blog : response))
       setMessage({
-          content: `Blog '${blogObject.title}' has been liked`,
-          isError: false
+        content: `Blog '${blogObject.title}' has been liked`,
+        isError: false
       })
     } catch (exception) {
       setMessage({
@@ -144,14 +142,13 @@ const App = () => {
   const deleteBlog = async (blog) => {
     if (window.confirm(`Do you want to delete the blog '${blog.title}' by '${blog.author}'`)) {
       try {
-        const response = await blogService.deleteBlogpost(blog.id)
+        await blogService.deleteBlogpost(blog.id)
         setBlogs(blogs.filter(b => b.id !== blog.id))
         setMessage({
-          content: `'${blog.title}' by '${blog.author}' has been deleted`,
+          content: `'${blog.title}' by ${blog.author} has been deleted`,
           isError: false
-      })
+        })
       } catch (exception) {
-        console.log(exception)
         setMessage({
           content: exception.response.data.error,
           isError: true
@@ -168,7 +165,7 @@ const App = () => {
 
   return (
     <div>
-      <Message message={message} setMessage={setMessage}/>
+      <Message message={message} setMessage={setMessage} />
       {user === null ?
         loginForm() :
         <div>
