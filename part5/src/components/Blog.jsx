@@ -46,14 +46,10 @@ const Blog = ({ blog, increaseBlogLike, removeBlog, username }) => {
       </div>
       <div style={infoShown} className='infoShown'>
         <div style={blogStyle}>
-          {blog.title} <button onClick={toggleVisibility}>hide</button>
-          <br></br>
-          {blog.url}
-          <br></br>
-          {blog.likes} <button onClick={increaseLike}>like</button>
-          <br></br>
-          {blog.user.name}
-          <br></br>
+          <li style={{listStyleType: 'none'}}>{blog.title} <button onClick={toggleVisibility}>hide</button></li>
+          <li style={{listStyleType: 'none'}}>{blog.url}</li>
+          <li style={{listStyleType: 'none'}}>{blog.likes} <button onClick={increaseLike}>like</button></li>
+          <li style={{listStyleType: 'none'}}>{blog.user.name}</li>
           <div style={deleteButtonHidden}>
             <button onClick={deleteBlog}>delete</button>
           </div>
