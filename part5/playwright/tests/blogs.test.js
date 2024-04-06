@@ -1,4 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
@@ -24,7 +25,7 @@ describe('Blog app', () => {
     test('fails with incorrect details', async ({ page }) => {
       await page.getByTestId('username').fill('wrong')
       await page.getByTestId('password').fill('incorrect')
-      await page.getByRole('button', { name: 'login'}).click()
+      await page.getByRole('button', { name: 'login' }).click()
 
       const errorDiv = await page.locator('.errorMessage')
       await expect(errorDiv).toContainText('Wrong username or password')
@@ -37,7 +38,7 @@ describe('Blog app', () => {
     test('succeeds with correct details', async ({ page }) => {
       await page.getByTestId('username').fill('zain')
       await page.getByTestId('password').fill('wowman')
-      await page.getByRole('button', { name: 'login'}).click()
+      await page.getByRole('button', { name: 'login' }).click()
 
       await expect(page.locator('.message').getByText('Zain logged in')).toBeVisible()
     })
@@ -47,7 +48,7 @@ describe('Blog app', () => {
     beforeEach(async ({ page }) => {
       await page.getByTestId('username').fill('zain')
       await page.getByTestId('password').fill('wowman')
-      await page.getByRole('button', { name: 'login'}).click()
+      await page.getByRole('button', { name: 'login' }).click()
     })
 
     test('a new blog can be created', async ({ page }) => {
@@ -60,5 +61,99 @@ describe('Blog app', () => {
       await expect(page.getByText(`A new blog 'test' by test added`)).toBeVisible()
       await expect(page.getByText('test test')).toBeVisible()
     })
+
+    test('a blog can be edited', async ({ page }) => {
+      await createBlog(page, 'test', 'test', 'test.com')
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.getByRole('button', { name: 'like' }).click()
+
+      await expect(page.getByText(`Blog 'test' has been liked`)).toBeVisible()
+      await expect(page.getByText('1')).toBeVisible()
+    })
+
+    test('a blog can be deleted', async ({ page }) => {
+      await createBlog(page, 'test', 'test', 'test.com')
+      await page.getByRole('button', { name: 'view' }).click()
+      page.on('dialog', dialog => dialog.accept())
+      await page.getByRole('button', { name: 'delete' }).click()
+      await expect(page.getByText(`'test' by test has been deleted`)).toBeVisible()
+      await expect(page.getByText('test')).not.toBeVisible()
+    })
+  })
+
+  test('when logged in and and a blog exists', async ({ page, request }) => {
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'Test',
+        username: 'test',
+        password: 'wowman'
+      }
+    })
+    loginWith(page, 'zain', 'wowman')
+    await createBlog(page, 'test', 'test', 'test.com')
+    await page.getByRole('button', { name: 'view' }).click()
+    await expect(page.getByText('delete')).toBeVisible()
+    await page.getByRole('button', { name: 'logout' }).click()
+    loginWith(page, 'test', 'wowman')
+    await page.getByRole('button', { name: 'view' }).click()
+    await expect(page.getByText('delete')).not.toBeVisible()
+  })
+
+  test('blogs are arranged in the order according to likes', async ({ page, request }) => {
+    await loginWith(page, 'zain', 'wowman')
+    await expect(page.locator('.message').getByText('Zain logged in')).toBeVisible()
+    const token = await page.evaluate(async () => {
+      return JSON.parse(localStorage.getItem('loggedInUser')).token})
+
+    await request.post('http://localhost:3003/api/blogs', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      data: {
+        title: '1 like',
+        author: 'zain',
+        url: 'test.com',
+        likes: 1,
+        user: '6611bfef7b643edb1f50c58c'
+      }
+    })
+    await request.post('http://localhost:3003/api/blogs', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      data: {
+        title: '1000 likes',
+        author: 'zain',
+        url: 'test.com',
+        likes: 1000,
+        user: '6611bfef7b643edb1f50c58c'
+      }
+    })
+    await request.post('http://localhost:3003/api/blogs', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      data: {
+        title: '50 likes',
+        author: 'zain',
+        url: 'test.com',
+        likes: 50,
+        user: '6611bfef7b643edb1f50c58c'
+      }
+    })
+    await request.post('http://localhost:3003/api/blogs', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      data: {
+        title: '500 likes',
+        author: 'zain',
+        url: 'test.com',
+        likes: 500,
+        user: '6611bfef7b643edb1f50c58c'
+      }
+    })
+
+    await page.reload()
   })
 })
