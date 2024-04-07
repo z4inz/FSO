@@ -153,7 +153,40 @@ describe('Blog app', () => {
         user: '6611bfef7b643edb1f50c58c'
       }
     })
+    await request.post('http://localhost:3003/api/blogs', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      data: {
+        title: '25 likes',
+        author: 'zain',
+        url: 'test.com',
+        likes: 25,
+        user: '6611bfef7b643edb1f50c58c'
+      }
+    })
+    await request.post('http://localhost:3003/api/blogs', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      data: {
+        title: '10000 likes',
+        author: 'zain',
+        url: 'test.com',
+        likes: 10000,
+        user: '6611bfef7b643edb1f50c58c'
+      }
+    })
 
     await page.reload()
+    await expect(page.getByText('Blogs')).toBeVisible()
+    await page.getByText('10000 likes zain view').waitFor()
+    const likes = await page.getByText('zain view').all()
+    await expect(await likes[0].innerText()).toEqual('10000 likes zain view')
+    await expect(await likes[1].innerText()).toEqual('1000 likes zain view')
+    await expect(await likes[2].innerText()).toEqual('500 likes zain view')
+    await expect(await likes[3].innerText()).toEqual('50 likes zain view')
+    await expect(await likes[4].innerText()).toEqual('25 likes zain view')
+    await expect(await likes[5].innerText()).toEqual('1 like zain view')
   })
 })
