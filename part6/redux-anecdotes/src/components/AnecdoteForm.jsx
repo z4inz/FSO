@@ -1,5 +1,5 @@
-import { useDispatch } from 'react-redux'
-import { newAnecdote, } from '../reducers/anecdoteReducer'
+import { useSelector, useDispatch } from 'react-redux'
+import { newAnecdote } from '../reducers/anecdoteReducer'
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
