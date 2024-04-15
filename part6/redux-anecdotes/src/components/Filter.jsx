@@ -1,12 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { searchFilter } from '../reducers/filterReducer'
+import { filter } from '../reducers/filterReducer'
 
 const Filter = () => {
   const dispatch = useDispatch()
 
   const handleChange = (event) => {
     const content = event.target.value
-    dispatch(searchFilter(content))
+    dispatch(filter(content))
   }
   const style = {
     marginBottom: 10
