@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { voteAnecdote } from '../reducers/anecdoteReducer'
-import { addNotification, removeNotification } from '../reducers/notificationReducer'
+import { increaseVote } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(state => {
@@ -12,14 +12,10 @@ const AnecdoteList = () => {
   const sortedAnecdotes = [...anecdotes].sort((a, b) => (b.votes - a.votes))
   const dispatch = useDispatch()
 
-  const vote = (id) => {
-    console.log('vote', id)
-    dispatch(voteAnecdote(id))
-    const votedAnecdote = anecdotes.find(anecdote => anecdote.id === id)
-    dispatch(addNotification(`'${votedAnecdote.content}' has been voted for`))
-    setTimeout(() => {
-      dispatch(removeNotification())
-    }, 5000)
+  const vote = (anecdote) => {
+    console.log('vote', anecdote.id)
+    dispatch(increaseVote(anecdote))
+    dispatch(setNotification(`'${anecdote.content}' has been voted for`, 5))
   }
 
   return (
@@ -31,7 +27,7 @@ const AnecdoteList = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button> {/*FIX THIS, PASS WHOLE ANECDOTE AND NOT ID INSTEAD...*/}
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       )}

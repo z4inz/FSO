@@ -13,8 +13,8 @@ const createNew = async (content) => {
   return response.data
 }
 
-const likeAnecdote = async (id, object) => {
-  const response = await axios.put(`${baseUrl}/${id}`, object)
+const likeAnecdote = async (object) => {
+  const response = await axios.put(`${baseUrl}/${object.id}`, object)
   return response.data
 }
 
