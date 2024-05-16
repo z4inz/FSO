@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
-import Message from './components/Message'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Togglable'
+import { useDispatch } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const dispatch = useDispatch()
 
   const [message, setMessage] = useState({
     content: '',
-    isError: false,
+    isError: false
   })
 
   useEffect(() => {
@@ -36,33 +39,38 @@ const App = () => {
     try {
       const user = await loginService.login({
         username,
-        password,
+        password
       })
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
 
       blogService.setToken(user.token)
       setUser(user)
       setUsername(''), setPassword('')
-      setMessage({
-        content: `${user.name} logged in`,
-        isError: false,
-      })
+      dispatch(
+        setNotification({
+          message: `${user.name} logged in`,
+          isError: false
+        })
+      )
     } catch (exception) {
-      setMessage({
-        content: 'Wrong username or password',
-        isError: true,
-      })
+      dispatch(
+        setNotification({
+          message: 'Wrong username or password',
+          isError: true
+        })
+      )
     }
-
     console.log('logging in with', username, password)
   }
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedInUser')
-    setMessage({
-      content: `${user.name} logged out`,
-      isError: false,
-    })
+    dispatch(
+      setNotification({
+        message: `${user.name} logged out`,
+        isError: false
+      })
+    )
     setUser(null)
   }
 
@@ -116,15 +124,19 @@ const App = () => {
     try {
       const response = await blogService.createBlogpost(blogObject)
       setBlogs(blogs.concat(response))
-      setMessage({
-        content: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
-        isError: false,
-      })
+      dispatch(
+        setNotification({
+          message: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
+          isError: false
+        })
+      )
     } catch (exception) {
-      setMessage({
-        content: exception.response.data.error,
-        isError: true,
-      })
+      dispatch(
+        setNotification({
+          message: exception.response.data.error,
+          isError: true
+        })
+      )
     }
   }
 
@@ -132,36 +144,44 @@ const App = () => {
     try {
       const response = await blogService.updateBlogpost(id, blogObject)
       setBlogs(blogs.map((blog) => (blog.id !== id ? blog : response)))
-      setMessage({
-        content: `Blog '${blogObject.title}' has been liked`,
-        isError: false,
-      })
+      dispatch(
+        setNotification({
+          message: `Blog '${blogObject.title}' has been liked`,
+          isError: false
+        })
+      )
     } catch (exception) {
-      setMessage({
-        content: exception.response.data.error,
-        isError: true,
-      })
+      dispatch(
+        setNotification({
+          message: exception.response.data.error,
+          isError: true
+        })
+      )
     }
   }
 
   const deleteBlog = async (blog) => {
     if (
       window.confirm(
-        `Do you want to delete the blog '${blog.title}' by '${blog.author}'`,
+        `Do you want to delete the blog '${blog.title}' by '${blog.author}'`
       )
     ) {
       try {
         await blogService.deleteBlogpost(blog.id)
         setBlogs(blogs.filter((b) => b.id !== blog.id))
-        setMessage({
-          content: `'${blog.title}' by ${blog.author} has been deleted`,
-          isError: false,
-        })
+        dispatch(
+          setNotification({
+            message: `'${blog.title}' by ${blog.author} has been deleted`,
+            isError: false
+          })
+        )
       } catch (exception) {
-        setMessage({
-          content: exception.response.data.error,
-          isError: true,
-        })
+        dispatch(
+          setNotification({
+            message: exception.response.data.error,
+            isError: true
+          })
+        )
       }
     }
   }
@@ -172,7 +192,7 @@ const App = () => {
 
   return (
     <div>
-      <Message message={message} setMessage={setMessage} />
+      <Notification message={message} setMessage={setMessage} />
       {user === null ? (
         loginForm()
       ) : (
