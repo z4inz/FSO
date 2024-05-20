@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Togglable from './components/Togglable'
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import BlogList from './components/BlogList'
+import { createBlog, initialiseBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector((state) => state.blogs)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -21,7 +22,7 @@ const App = () => {
   })
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    dispatch(initialiseBlogs())
   }, [])
 
   useEffect(() => {
@@ -103,50 +104,12 @@ const App = () => {
     )
   }
 
-  const displayBlogs = () => {
-    const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-    return (
-      <div>
-        {sortedBlogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            increaseBlogLike={increaseBlogLike}
-            removeBlog={deleteBlog}
-            username={user.username}
-          />
-        ))}
-      </div>
-    )
-  }
-
   const addNewBlog = async (blogObject) => {
     try {
-      const response = await blogService.createBlogpost(blogObject)
-      setBlogs(blogs.concat(response))
+      dispatch(createBlog(blogObject))
       dispatch(
         setNotification({
           message: `A new blog '${blogObject.title}' by ${blogObject.author} added`,
-          isError: false
-        })
-      )
-    } catch (exception) {
-      dispatch(
-        setNotification({
-          message: exception.response.data.error,
-          isError: true
-        })
-      )
-    }
-  }
-
-  const increaseBlogLike = async (id, blogObject) => {
-    try {
-      const response = await blogService.updateBlogpost(id, blogObject)
-      setBlogs(blogs.map((blog) => (blog.id !== id ? blog : response)))
-      dispatch(
-        setNotification({
-          message: `Blog '${blogObject.title}' has been liked`,
           isError: false
         })
       )
@@ -203,7 +166,7 @@ const App = () => {
           </p>
           <Togglable buttonLabel="new blog post">{newBlogForm()}</Togglable>
           <br></br>
-          {displayBlogs()}
+          <BlogList blogs={blogs} deleteBlog={deleteBlog} user={user} />
         </div>
       )}
     </div>
