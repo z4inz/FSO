@@ -1,10 +1,10 @@
 import { useDispatch } from 'react-redux'
 import { useState } from 'react'
-import { increaseLike } from '../reducers/blogReducer'
+import { increaseLike, removeBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
 
-const Blog = ({ blog, removeBlog, username }) => {
+const Blog = ({ blog, username }) => {
   const dispatch = useDispatch()
 
   const [visible, setVisible] = useState(false)
@@ -28,7 +28,17 @@ const Blog = ({ blog, removeBlog, username }) => {
   }
 
   const deleteBlog = async () => {
-    removeBlog(blog)
+    if (window.confirm(
+      `Do you want to delete the blog '${blog.title}' by '${blog.author}'`
+    )) {
+      dispatch(removeBlog(blog))
+      dispatch(
+        setNotification({
+          message: `The blog '${blog.title}' has been deleted`,
+          isError: false
+        })
+      )
+    }
   }
 
   const blogStyle = {

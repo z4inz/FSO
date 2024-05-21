@@ -30,12 +30,12 @@ const updateBlogpost = async (newObject) => {
   return response.data
 }
 
-const deleteBlogpost = async (id) => {
+const deleteBlogpost = async (blog) => {
   const config = {
     headers: { Authorization: token }
   }
 
-  const response = await axios.delete(`${baseUrl}/${id}`, config)
+  const response = await axios.delete(`${baseUrl}/${blog.id}`, config)
   return response.data
 }
 
