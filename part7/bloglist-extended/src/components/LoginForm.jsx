@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { handleLogin } from "../reducers/userReducer"
+import { handleLogin } from "../reducers/currentUserReducer"
 import { useDispatch } from "react-redux"
 
 const LoginForm = () => {
