@@ -1,21 +1,22 @@
-import { useDispatch } from 'react-redux'
-import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { increaseLike, removeBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
+import { useParams } from "react-router-dom"
 
+const Blog = () => {
+  const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
+  const username = user.username
+  const id = useParams().id
+  const blog = blogs.find(b => b.id === id)
 
-const Blog = ({ blog, username }) => {
   const dispatch = useDispatch()
 
-  const [visible, setVisible] = useState(false)
-
-  const infoHidden = { display: visible ? 'none' : '' }
-  const infoShown = { display: visible ? '' : 'none' }
-  const deleteButtonHidden = { display: (username === blog.user.username) ? '' : 'none' }
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
+  if (!user || !blog) {
+    return null
   }
+
+  const deleteButtonHidden = { display: (username === blog.user.username) ? '' : 'none' }
 
   const likeBlogpost = async () => {
     dispatch(increaseLike(blog))
@@ -52,14 +53,8 @@ const Blog = ({ blog, username }) => {
 
   return (
     <div>
-      <div style={infoHidden}>
         <div style={blogStyle}>
-          {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
-        </div>
-      </div>
-      <div style={infoShown} className='infoShown'>
-        <div style={blogStyle}>
-          <li style={{ listStyleType: 'none' }}>{blog.title} <button onClick={toggleVisibility}>hide</button></li>
+          <li style={{ listStyleType: 'none' }}>{blog.title}</li>
           <li style={{ listStyleType: 'none' }}>{blog.url}</li>
           <li style={{ listStyleType: 'none' }}>{blog.likes} <button onClick={likeBlogpost}>like</button></li>
           <li style={{ listStyleType: 'none' }}>{blog.user.name}</li>
@@ -67,7 +62,6 @@ const Blog = ({ blog, username }) => {
             <button onClick={deleteBlog}>delete</button>
           </div>
         </div>
-      </div>
     </div>
   )
 }

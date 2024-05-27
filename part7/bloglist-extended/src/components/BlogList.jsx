@@ -1,20 +1,23 @@
-import Blog from "./Blog"
 import { useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 
-const BlogList = ({ increaseBlogLike, deleteBlog }) => {
+const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
-  const user = useSelector(state => state.user)
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 5,
+    border: 'solid',
+    borderWidth: 1,
+    paddingBottom: 5,
+    marginBottom: 5
+  }
+
   return (
     <div>
       {sortedBlogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          increaseBlogLike={increaseBlogLike}
-          removeBlog={deleteBlog}
-          username={user.username}
-        />
+        <Link to={`/blogs/${blog.id}`} key={blog.id}><div style={blogStyle}>{blog.title} - {blog.author}</div></Link>
       ))}
     </div>
   )
