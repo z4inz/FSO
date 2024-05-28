@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { increaseLike, removeBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
@@ -9,6 +10,8 @@ const Blog = () => {
   const username = user.username
   const id = useParams().id
   const blog = blogs.find(b => b.id === id)
+
+  const [comment, setComment] = useState('')
 
   const dispatch = useDispatch()
 
@@ -42,26 +45,33 @@ const Blog = () => {
     }
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 5,
-    border: 'solid',
-    borderWidth: 1,
-    paddingBottom: 5,
-    marginBottom: 5
+  const addComment = async (event) => {
+    event.preventDefault()
+    console.log("wow")
   }
 
   return (
     <div>
-        <div style={blogStyle}>
-          <li style={{ listStyleType: 'none' }}>{blog.title}</li>
-          <li style={{ listStyleType: 'none' }}>{blog.url}</li>
-          <li style={{ listStyleType: 'none' }}>{blog.likes} <button onClick={likeBlogpost}>like</button></li>
-          <li style={{ listStyleType: 'none' }}>{blog.user.name}</li>
-          <div style={deleteButtonHidden}>
-            <button onClick={deleteBlog}>delete</button>
-          </div>
-        </div>
+      <li style={{ listStyleType: 'none' }}><h2>{blog.title}</h2></li>
+      <li style={{ listStyleType: 'none' }}><a href={`https://${blog.url}`}>{blog.url}</a></li>
+      <li style={{ listStyleType: 'none' }}>{blog.likes} likes <button onClick={likeBlogpost}>like</button></li>
+      <li style={{ listStyleType: 'none' }}>added by {blog.user.name}</li>
+      <div style={deleteButtonHidden}>
+        <button onClick={deleteBlog}>delete</button>
+      </div>
+      <h2>comments</h2>
+      <form onSubmit={addComment}>
+        <input
+          type="text"
+          value={comment}
+          name="comment"
+          onChange={({ target }) => setComment(target.value)}
+        />
+        <button type="submit">add comment</button>
+      </form>
+      {blog.comments.map(comment =>
+        <li key={comment}>{comment}</li>
+      )}
     </div>
   )
 }

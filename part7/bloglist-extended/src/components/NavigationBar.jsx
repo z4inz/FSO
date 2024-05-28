@@ -26,7 +26,7 @@ const NavigationBar = () => {
     <div>
       <Link style={padding} to="/">blogs</Link>
       <Link style={padding} to="/users">users</Link>
-      {user.name} logged in <button onClick={handleLogout}>logout</button>
+      <span style={padding}>{user.name} logged in <button onClick={handleLogout}>logout</button></span>
     </div>
   )
 }

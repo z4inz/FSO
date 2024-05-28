@@ -3,7 +3,7 @@ import blogService from '../services/blogs'
 import { setNotification } from './notificationReducer'
 
 const blogSlice = createSlice({
-  name: 'blog',
+  name: 'blogs',
   initialState: [],
   reducers: {
     setBlogs(state, action) {
@@ -14,14 +14,14 @@ const blogSlice = createSlice({
     },
     likeBlog(state, action) {
       const likedBlog = action.payload
-      return state.map(blog => 
+      return state.map(blog =>
         blog.id !== likedBlog.id ? blog : likedBlog
       )
     },
     deleteBlog(state, action) {
       const blogToDelete = action.payload
       console.log(blogToDelete)
-      return state.filter(blog => 
+      return state.filter(blog =>
         blog.id !== blogToDelete.id
       )
     }
