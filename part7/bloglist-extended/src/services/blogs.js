@@ -39,12 +39,12 @@ const deleteBlogpost = async blog => {
   return response.data
 }
 
-const commentOnBlogpost = async (comment, id) => {
+const commentOnBlogpost = async (commentObject, id) => {
   const config = {
     headers: { Authorization: token }
   }
 
-  const response = await axios.post(`${baseUrl}/${id}/comments`, comment, config)
+  const response = await axios.post(`${baseUrl}/${id}/comments`, commentObject, config)
   return response.data
 }
 

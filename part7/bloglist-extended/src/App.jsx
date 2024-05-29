@@ -9,7 +9,6 @@ import { initialiseBlogs } from './reducers/blogReducer'
 import LoginForm from './components/LoginForm'
 import { initialiseUser } from "./reducers/currentUserReducer"
 import UsersList from "./components/UsersList"
-import { initialiseUsers } from './reducers/usersReducer'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import IndividualUser from './components/IndividualUser'
 import Blog from './components/Blog'
@@ -23,7 +22,6 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initialiseBlogs())
-    dispatch(initialiseUsers())
   }, [])
 
   useEffect(() => {

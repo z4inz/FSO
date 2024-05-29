@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { increaseLike, removeBlog } from '../reducers/blogReducer'
+import { createComment, increaseLike, removeBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 import { useParams } from "react-router-dom"
+import { useNavigate } from 'react-router-dom'
 
 const Blog = () => {
   const blogs = useSelector(state => state.blogs)
@@ -14,6 +15,7 @@ const Blog = () => {
   const [comment, setComment] = useState('')
 
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   if (!user || !blog) {
     return null
@@ -42,12 +44,14 @@ const Blog = () => {
           isError: false
         })
       )
+      navigate('/')
     }
   }
 
   const addComment = async (event) => {
     event.preventDefault()
-    console.log("wow")
+    dispatch(createComment(comment, blog.id))
+    setComment('')
   }
 
   return (
