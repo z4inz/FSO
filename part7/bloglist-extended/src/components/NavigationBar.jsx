@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { useSelector, useDispatch } from 'react-redux'
 import { initialiseUser } from "../reducers/currentUserReducer"
 import { setNotification } from '../reducers/notificationReducer'
+import { Button } from "react-bootstrap"
 
 const NavigationBar = () => {
   const dispatch = useDispatch()
@@ -26,7 +27,7 @@ const NavigationBar = () => {
     <div>
       <Link style={padding} to="/">blogs</Link>
       <Link style={padding} to="/users">users</Link>
-      <span style={padding}>{user.name} logged in <button onClick={handleLogout}>logout</button></span>
+      <span style={padding}>{user.name} logged in <Button onClick={handleLogout}>logout</Button></span>
     </div>
   )
 }

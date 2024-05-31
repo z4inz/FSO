@@ -38,12 +38,12 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Notification />
-      {user === null ? (
-        <LoginForm />
-      ) : (
-        <Router>
+    <div className="container">
+      <Router>
+        <Notification />
+        {user === null ? (
+          <LoginForm />
+        ) : (
           <div>
             <NavigationBar />
             <h1>Blogs</h1>
@@ -54,8 +54,8 @@ const App = () => {
               <Route path="/" element={<div><Togglable buttonLabel="new blog post">{newBlogForm()}</Togglable> <br /> <BlogList blogs={blogs} /></div>} />
             </Routes>
           </div>
-        </Router>
-      )}
+        )}
+      </Router>
     </div>
   )
 }
